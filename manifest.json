@@ -1,0 +1,13 @@
+{
+    "manifest_version": 3,
+    "name": "CourseProject",
+    "version": "0.1",
+    "permissions": ["storage", "scripting", "activeTab"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "main.html"
+    }
+}
+  
