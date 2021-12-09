@@ -23,6 +23,9 @@ if (window.location.toString().endsWith('.pdf')) {
     let author = document.getElementById("author");
     console.log();
     self.pdfToText(window.location.toString()).then(function(result) {
-        console.log(result);
+        chrome.runtime.sendMessage({
+            from: 'content',
+            subject: result
+        });
     });
 }

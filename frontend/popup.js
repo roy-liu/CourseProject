@@ -1,19 +1,10 @@
-
-// let submitButton = document.getElementById("que");
-// submitButton.addEventListener("click", async () => {
-//     console.log("WTFFFFFFff");
-//     console.log(document.getElementById("author").value);
-
-// });
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("the doc loaded")
     var form = document.getElementById("queryForData")
     console.log(form)
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        let data = document.getElementById("author").value;
-        callArxivApi(data);
         let [tab] = await chrome.tabs.query({active: true, currentWindow: true});
         chrome.scripting.executeScript({
             target: {tabId: tab.id},
@@ -21,6 +12,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })
 });
+
+chrome.runtime.onMessage.addListener((msg, sender) => {
+	// First, validate the message's structure.
+	if ((msg.from === 'content')) {
+	  // Enable the page-action for the requesting tab.
+	  console.log(msg.subject);
+	  let author =document.getElementById("author").value;
+
+	  const data = {
+		  'pdf': msg.subject,
+		  'author': author
+	  }
+	  console.log(data);
+	  fetch('http://127.0.0.1:5000/api/requestSimilarities',{
+		  method: 'POST',
+		  headers: {
+			  'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify(data)
+		}
+	  ).then( res => res.json()).then (data => console.log(data));
+	}
+  });
+  
 
 async function callArxivApi (authorname) {
     const resp = await fetch(
